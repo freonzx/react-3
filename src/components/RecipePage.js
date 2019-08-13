@@ -25,8 +25,16 @@ class RecipePage extends Component {
     fetchRecipe = async searchString => {
         const recipe = await getRecipesByName(searchString)
         const singlerecipe = recipe.shift()
-        console.log(singlerecipe)
-        this.setState({ recipe: singlerecipe, data: recipe, loading: false })
+        console.log('Single ->', singlerecipe)
+        const similarOnes = await getRecipesByIngredients(
+            singlerecipe.ingredients
+        )
+        console.log('More ->', similarOnes.splice(1, 4))
+        this.setState({
+            recipe: singlerecipe,
+            loading: false,
+            data: similarOnes.splice(1, 4)
+        })
         return
     }
 
@@ -48,10 +56,12 @@ class RecipePage extends Component {
                             <h5 className='card-title'>Similar recipes</h5>
                             <div className='row'>
                                 {data.map((recipe, index) => {
-                                    if (index >= 4) {
-                                        return
-                                    }
-                                    return <RecipeItem recipe={recipe} />
+                                    return (
+                                        <RecipeItem
+                                            key={index}
+                                            recipe={recipe}
+                                        />
+                                    )
                                 })}
                             </div>
                         </div>
