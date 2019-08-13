@@ -1,6 +1,10 @@
 const API_PATH = 'http://localhost:3030/api'
 
 const getRecipesByIngredients = (ingredients, page = 1) => {
+    if (!ingredients) {
+        return []
+    }
+
     const result = fetch(`${API_PATH}?i=${ingredients}&p=${page}`)
         .then(response => {
             return response.json()
@@ -14,7 +18,11 @@ const getRecipesByIngredients = (ingredients, page = 1) => {
     return result
 }
 
-const getRecipesByName = (name = '', page = 1) => {
+const getRecipesByName = (name, page = 1) => {
+    if (name === undefined) {
+        return []
+    }
+
     const result = fetch(`${API_PATH}?q=${name}&p=${page}`)
         .then(response => {
             return response.json()

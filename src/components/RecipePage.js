@@ -12,20 +12,21 @@ class RecipePage extends Component {
                 title: '',
                 ingredients: ''
             },
-            data: []
+            data: [],
+            loading: true
         }
     }
 
     componentDidMount() {
         const { searchString } = this.props
-        console.log('1', searchString)
         this.fetchRecipe(searchString)
     }
 
     fetchRecipe = async searchString => {
         const recipe = await getRecipesByName(searchString)
         const singlerecipe = recipe.shift()
-        this.setState({ recipe: singlerecipe, data: recipe })
+        console.log(singlerecipe)
+        this.setState({ recipe: singlerecipe, data: recipe, loading: false })
         return
     }
 
@@ -34,25 +35,29 @@ class RecipePage extends Component {
         const { data } = this.state
 
         return (
-            <div>
-                <img src={thumbnail} alt={title} />
-                <div className='card-body'>
-                    <h5 className='card-title'>{title}</h5>
-                    <p className='card-text'>
-                        <strong>Ingredients: </strong>
-                        {ingredients}
-                    </p>
-                    <h5 className='card-title'>Similar recipes</h5>
-                    <div className='row'>
-                        {data.map((recipe, index) => {
-                            if (index >= 4) {
-                                return
-                            }
-                            return <RecipeItem recipe={recipe} />
-                        })}
+            <React.Fragment>
+                {!this.state.loading ? (
+                    <div>
+                        <img src={thumbnail} alt={title} />
+                        <div className='card-body'>
+                            <h5 className='card-title'>{title}</h5>
+                            <p className='card-text'>
+                                <strong>Ingredients: </strong>
+                                {ingredients}
+                            </p>
+                            <h5 className='card-title'>Similar recipes</h5>
+                            <div className='row'>
+                                {data.map((recipe, index) => {
+                                    if (index >= 4) {
+                                        return
+                                    }
+                                    return <RecipeItem recipe={recipe} />
+                                })}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                ) : null}
+            </React.Fragment>
         )
     }
 }
