@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
-import { slugify } from '../helpers'
 
 const highlight = (text, highlight) => {
     if (text !== null && text !== '' && typeof text !== 'undefined') {
@@ -20,11 +19,11 @@ const highlight = (text, highlight) => {
     }
 }
 
-const RecipeItem = ({ recipe = {}, mark }) =>
+const RecipeItem = ({ recipe = {}, mark, selected }) =>
     recipe.title ? (
         <div className='RecipeItem col-sm-3 mt-3 mb-3'>
             <div className='card'>
-                <Link to={`/recipe/${recipe.title.toLowerCase()}`}>
+                <Link to={`/recipe/`} onClick={() => selected(recipe)}>
                     <img
                         className='card-img-top img-fluid'
                         src={

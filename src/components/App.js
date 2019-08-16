@@ -1,23 +1,42 @@
 import React, { Component } from 'react'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { Redirect, Route, Switch, matchPath } from 'react-router-dom'
 import Navbar from './Navbar'
 import Home from './Home'
 import RecipePage from './RecipePage'
+import { getRecipesByName } from '../services/recipes'
+import { withRouter } from 'react-router'
 
 class App extends Component {
     constructor(props) {
         super(props)
 
-        this.state = {}
+        this.state = {
+            recipeSelected: {
+                thumbnail: '',
+                title: '',
+                ingredients: ''
+            }
+        }
+    }
+
+    handleRecipeChange = recipe => {
+        this.setState({ recipeSelected: recipe })
+        console.log(recipe)
     }
 
     render() {
         const HomeRoute = ({ match }) => (
-            <Home searchString={match.params.searchString} />
+            <Home
+                searchString={match.params.searchString}
+                selected={this.handleRecipeChange}
+            />
         )
 
         const RecipePageRoute = ({ match }) => (
-            <RecipePage searchString={match ? match.params.recipe || '' : ''} />
+            <RecipePage
+                recipe={this.state.recipeSelected}
+                selected={this.handleRecipeChange}
+            />
         )
 
         return (
@@ -38,7 +57,7 @@ class App extends Component {
                     <Switch>
                         <Route
                             exact
-                            path='/recipe/:recipe'
+                            path='/recipe/'
                             component={RecipePageRoute}
                         />
                         <Route
@@ -53,4 +72,4 @@ class App extends Component {
     }
 }
 
-export default App
+export default withRouter(App)

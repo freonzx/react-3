@@ -8,44 +8,39 @@ class Home extends Component {
         super(props)
         this.state = {
             recipes: [],
-            page: 1
+            page: 1,
+            searchString: ''
         }
     }
 
     async componentDidMount() {
-        this.fetchRecipes()
-    }
-
-    fetchRecipes = async () => {
-        const { page } = this.state
         let search = ''
         this.props.searchString
             ? (search = this.props.searchString)
             : (search = '')
-        const response = await getRecipesByName(search, page)
-        this.setState({
-            recipes: response
+        await getRecipesByName(search, this.state.page).then(res => {
+            this.setState({ recipes: res, searchString: search })
         })
     }
 
-    handlePageIncrement = async e => {
-        e.preventDefault()
+    handleNext = async () => {
+        const { searchString, page } = this.state
 
-        switch (e.target.id) {
-            case 'next':
-                await this.setState({ page: this.state.page + 1 })
-                break
-            case 'prev':
-                await this.setState({ page: this.state.page - 1 })
-                break
-            default:
-                break
-        }
+        const response = await getRecipesByName(searchString, page + 1)
+        this.setState({
+            recipes: response,
+            page: page + 1
+        })
+    }
 
-        if (this.state.page <= 0) {
-            this.setState({ page: 1 })
-        }
-        this.fetchRecipes()
+    handlePrevious = async () => {
+        const { searchString, page } = this.state
+
+        const response = await getRecipesByName(searchString, page - 1)
+        this.setState({
+            recipes: response,
+            page: page - 1
+        })
     }
 
     render() {
@@ -61,6 +56,7 @@ class Home extends Component {
                                 key={index}
                                 recipe={recipe}
                                 mark={this.props.searchString}
+                                selected={this.props.selected}
                             />
                         )
                     })}
@@ -70,7 +66,11 @@ class Home extends Component {
                         <ul className='pagination'>
                             <li className='page-item'>
                                 <button
-                                    onClick={this.handlePageIncrement}
+                                    onClick={
+                                        this.state.page >= 1
+                                            ? this.handlePrevious
+                                            : null
+                                    }
                                     id='prev'
                                     className='page-link'
                                     href='#'
@@ -80,7 +80,7 @@ class Home extends Component {
                             </li>
                             <li className='page-item'>
                                 <button
-                                    onClick={this.handlePageIncrement}
+                                    onClick={this.handleNext}
                                     id='next'
                                     className='page-link'
                                     href='#'

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import RecipeItem from './RecipeItem'
-import { getRecipesByName, getRecipesByIngredients } from '../services/recipes'
-import { slugify } from '../helpers'
+import { getRecipesByIngredients } from '../services/recipes'
 
 class RecipePage extends Component {
     constructor(props) {
@@ -17,24 +16,25 @@ class RecipePage extends Component {
         }
     }
 
-    componentDidMount() {
-        const { searchString } = this.props
-        this.fetchRecipe(searchString)
+    async componentDidMount() {
+        const { recipe } = this.props
+        if (recipe) {
+            await this.setState({ recipe: recipe, loading: false })
+        }
+        this.fetchRecipe(this.state.recipe.ingredients)
     }
 
-    fetchRecipe = async searchString => {
-        const recipe = await getRecipesByName(searchString)
-        const singlerecipe = recipe.shift()
-        console.log('Single ->', singlerecipe)
-        const similarOnes = await getRecipesByIngredients(
-            singlerecipe.ingredients
-        )
-        console.log('More ->', similarOnes.splice(1, 4))
-        this.setState({
-            recipe: singlerecipe,
-            loading: false,
-            data: similarOnes.splice(1, 4)
+    fetchRecipe = async ingredients => {
+        const result = await getRecipesByIngredients(ingredients)
+
+        const filtered = result.filter(ele => {
+            return ele.title !== this.state.recipe.title
         })
+
+        this.setState({
+            data: filtered.splice(0, 4)
+        })
+
         return
     }
 
@@ -60,6 +60,7 @@ class RecipePage extends Component {
                                         <RecipeItem
                                             key={index}
                                             recipe={recipe}
+                                            selected={this.props.selected}
                                         />
                                     )
                                 })}

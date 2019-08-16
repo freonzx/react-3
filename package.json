@@ -26,6 +26,7 @@
         "exec": "cross-env CI=true react-scripts test --env=jsdom --json",
         "eject": "react-scripts eject",
         "submit": "codenation-jest-score ./score-map.json",
-        "proxy": "node ./api-proxy/server.js"
+        "proxy": "node ./api-proxy/server.js",
+        "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache"
     }
 }

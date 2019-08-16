@@ -22,7 +22,6 @@ const getRecipesByName = (name, page = 1) => {
     if (name === undefined) {
         return []
     }
-
     const result = fetch(`${API_PATH}?q=${name}&p=${page}`)
         .then(response => {
             return response.json()

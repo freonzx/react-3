@@ -49,7 +49,6 @@ describe('App', () => {
             title: 'test',
             ingredients: 'ingredients'
         }
-
         getRecipesByName.mockReturnValue(Promise.resolve([recipe]))
 
         const wrapper = mount(
